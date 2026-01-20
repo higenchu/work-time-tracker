@@ -98,7 +98,7 @@
     const TOTAL_DOTS = DOTS_PER_ROW * 3;
     const CYCLE_TIME = 60 * 30; // 30分
     const MAX_CYCLES = 6;
-    const COLORS = ['#ffffff', '#ff0033', '#ffcc00', '#00ff66', '#0066ff', '#cc00ff'];
+    const COLORS = ['#ffffff', '#00ff66', '#0066ff', '#cc00ff', '#ffcc00', '#ff0033'];
 
     function initProgressBar() {
       const container = document.getElementById('progressBar');
@@ -170,7 +170,7 @@
           const activeDots = Math.min(Math.floor(item.duration / 5), 36);
           let miniDotsHtml = '<div class="mini-bar">';
           for(let i=0; i<36; i++) {
-            const colorIdx = Math.floor(i / 6); // 6個(1時間)ごとに色を変える
+            const colorIdx = Math.floor(i / 6); // 1時間(6個)ごとにレアリティ上昇
             const color = i < activeDots ? COLORS[colorIdx] : '#111';
             miniDotsHtml += `<div class="mini-dot" style="background-color: ${color}"></div>`;
           }
