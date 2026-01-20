@@ -84,31 +84,43 @@
         }
 
         async function stopTask() {
-            document.getElementById('stopBtn').disabled = true;
-            const payload = {
-                taskName: document.getElementById('taskName').value,
+              const taskName = document.getElementById('taskName').value;
+              const endTime = new Date().toISOString();
+              document.getElementById('stopBtn').disabled = true;
+            
+              const payload = {
+                taskName: taskName,
                 startTime: startTime,
-                endTime: new Date().toISOString()
-            };
-
-            try {
-                // GASへデータを送信
-                const response = await fetch(gasUrl, {
-                    method: 'POST',
-                    mode: 'no-cors', // セキュリティ制限回避のため
-                    body: JSON.stringify(payload)
+                endTime: endTime
+              };
+            
+              try {
+                // 1. GASにデータを送信 (no-corsモード)
+                await fetch(gasUrl, {
+                  method: 'POST',
+                  mode: 'no-cors',
+                  header: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
                 });
-                alert("記録を送信しました！(反映には数秒かかります)");
-                // 履歴取得用のGETリクエスト
-                const res = await fetch(gasUrl + "?type=history");
-                const data = await res.json();
-                updateUI(data);
-            } catch (e) {
-                console.error(e);
-            } finally {
-                document.getElementById('startBtn').disabled = false;
+            
+                // no-corsではレスポンスが受け取れないため、少し待ってから履歴を再取得する
+                alert("送信しました！反映まで数秒お待ちください。");
+                
+                setTimeout(() => {
+                  fetch(gasUrl)
+                    .then(res => res.json())
+                    .then(data => {
+                      updateUI(data);
+                      document.getElementById('startBtn').disabled = false;
+                      document.getElementById('taskName').value = "";
+                    });
+                }, 2000); // 2秒待機
+            
+              } catch (e) {
+                alert("エラーが発生しました。");
+                document.getElementById('stopBtn').disabled = false;
+              }
             }
-        }
 
         // 初回読み込み
         fetch(gasUrl + "?type=history")
