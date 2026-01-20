@@ -81,15 +81,15 @@
 
     /* 2列・高密度プログレスバー */
     .progress-outer {
-      padding: 0 15px; /* タイマーより少し内側に寄せる */
+      padding: 0 45px; /* タイマーより少し内側に寄せる */
       width: 100%;
       box-sizing: border-box;
       margin-bottom: 45px;
     }
     .progress-container {
       display: grid;
-      grid-template-columns: repeat(40, 1fr); /* 密度2倍 */
-      grid-template-rows: repeat(2, 1fr);
+      grid-template-columns: repeat(60, 1fr); /* 密度2倍 */
+      grid-template-rows: repeat(3, 1fr);
       gap: 3px;
     }
     .progress-dot {
@@ -189,9 +189,9 @@
     const gasUrl = "https://script.google.com/macros/s/AKfycbxekGf21dxDwu_PgNrW6anyJ1hsYWq0eKfPuR9ElVVAH5-Ev6n27R9jbiiv6FxVxjhy/exec";
     let startTime;
     let timerInterval;
-    const DOTS_PER_ROW = 40;
-    const TOTAL_DOTS = DOTS_PER_ROW * 2;
-    const DURATION_TO_FILL = 60 * 30; // 30分で満タン
+    const DOTS_PER_ROW = 60;
+    const TOTAL_DOTS = DOTS_PER_ROW * 3;
+    const DURATION_TO_FILL = 60 * 1; // 30分で満タン
 
     function initProgressBar() {
       const container = document.getElementById('progressBar');
