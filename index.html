@@ -7,7 +7,7 @@
 
   // GASへの送信（fetchを使う）
   async function stopTask() {
-    const gasUrl = "あなたのGASのデプロイURL"; // ここに貼り付け
+    const gasUrl = "https://script.google.com/macros/s/AKfycbxekGf21dxDwu_PgNrW6anyJ1hsYWq0eKfPuR9ElVVAH5-Ev6n27R9jbiiv6FxVxjhy/exec"; // ここに貼り付け
     const response = await fetch(gasUrl, {
       method: 'POST',
       body: JSON.stringify({
