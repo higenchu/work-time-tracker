@@ -157,19 +157,42 @@
     function updateProgressBar() {
       if (!startTime) return;
       const elapsed = (new Date() - startTime) / 1000;
-      const cycleIdx = Math.min(Math.floor(elapsed / CYCLE_TIME), COLORS.length - 1);
-      const activeCols = Math.floor(((elapsed % CYCLE_TIME) / CYCLE_TIME) * DOTS_PER_ROW);
+      
+      // 3時間を最大値として計算を固定する (30分 * 6サイクル = 10800秒)
+      const MAX_TOTAL_TIME = CYCLE_TIME * COLORS.length;
+      const effectiveElapsed = Math.min(elapsed, MAX_TOTAL_TIME);
+      
+      // どのサイクル(色)にいるか
+      let cycleIdx = Math.floor(effectiveElapsed / CYCLE_TIME);
+      
+      // 進捗率の計算 (3時間を超えたら100%に固定)
+      let progressInCycle;
+      if (effectiveElapsed >= MAX_TOTAL_TIME) {
+        cycleIdx = COLORS.length - 1; // 最後の色(赤)に固定
+        progressInCycle = 1;         // バーを全点灯に固定
+      } else {
+        progressInCycle = (effectiveElapsed % CYCLE_TIME) / CYCLE_TIME;
+      }
+      
+      const activeCols = Math.floor(progressInCycle * DOTS_PER_ROW);
       
       const columns = document.querySelectorAll('.progress-column');
       columns.forEach((col, i) => {
         const dots = col.querySelectorAll('.progress-dot');
         dots.forEach(dot => {
           if (i < activeCols) {
+            // 現在のサイクルの色で点灯
             dot.style.backgroundColor = COLORS[cycleIdx];
             dot.style.boxShadow = `0 0 4px ${COLORS[cycleIdx]}`;
           } else {
-            dot.style.backgroundColor = cycleIdx > 0 ? COLORS[cycleIdx-1] : '#111';
-            dot.style.boxShadow = 'none';
+            // 前のサイクルの色を維持 (最初のサイクルなら暗色)
+            if (cycleIdx > 0) {
+              dot.style.backgroundColor = COLORS[cycleIdx - 1];
+              dot.style.boxShadow = 'none';
+            } else {
+              dot.style.backgroundColor = '#111';
+              dot.style.boxShadow = 'none';
+            }
           }
         });
       });
