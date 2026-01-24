@@ -22,71 +22,115 @@
       background-size: 20px 20px;
       color: var(--text-main);
       font-family: 'DotGothic16', sans-serif;
-      font-weight: bold; 
       margin: 0;
       display: flex; flex-direction: column; align-items: center; min-height: 100vh;
       transition: all 0.3s ease;
       overflow-x: hidden;
     }
 
-    .container { width: 92%; max-width: 420px; margin-top: 40px; transition: margin 0.3s; }
-    body.compact-mode .history-section, body.compact-mode .btn-group, body.compact-mode .weekly-section { display: none; }
-    body.compact-mode .container { margin-top: 15px; }
-
-    .status-area { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-sub); margin-bottom: 10px; }
+    .container { width: 92%; max-width: 420px; margin-top: 40px; }
+    
+    /* 1. ステータスエリアの修正 (Work Logging削除、Lapseに変更) */
+    .status-area { display: flex; align-items: center; font-size: 0.75rem; color: var(--text-sub); margin-bottom: 10px; font-weight: normal; }
     .status-dot { width: 6px; height: 6px; background-color: var(--accent-red); border-radius: 50%; display: inline-block; margin-right: 6px; opacity: 0; }
     .recording .status-dot { animation: blink 1s infinite; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
+    /* 2. ヘッダー・入力欄 (ウェイトを元に戻す) */
     .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px; }
-    input[type="text"] { flex-grow: 1; background: none; border: none; border-bottom: 2px solid var(--text-sub); color: var(--text-main); padding: 8px 0; font-family: inherit; font-size: 1rem; font-weight: bold; outline: none; }
-    .size-btn { background: none; border: 2px solid var(--text-sub); color: var(--text-sub); padding: 6px 12px; font-family: inherit; font-size: 0.65rem; font-weight: bold; cursor: pointer; }
+    input[type="text"] { 
+      flex-grow: 1; background: none; border: none; border-bottom: 1px solid var(--text-sub);
+      color: var(--text-main); padding: 8px 0; font-family: inherit; font-size: 0.9rem; 
+      font-weight: normal; outline: none; 
+    }
+    .size-btn { 
+      background: none; border: 1px solid var(--text-sub); color: var(--text-sub);
+      padding: 4px 10px; font-family: inherit; font-size: 0.6rem; 
+      font-weight: normal; cursor: pointer; letter-spacing: 1px;
+    }
 
-    #timerDisplay { font-size: 5rem; text-align: center; margin: 10px 0 20px; font-variant-numeric: tabular-nums; letter-spacing: -2px; }
+    /* 3. タイマー (字間を少し開ける) */
+    #timerDisplay { 
+      font-size: 4.8rem; text-align: center; margin: 10px 0 20px; 
+      font-variant-numeric: tabular-nums; letter-spacing: 2px; font-weight: normal;
+    }
 
-    /* 密集型プログレスバー */
+    /* 4. プログレスバー (ドットを円形に、ギャップをゼロに) */
     .progress-outer { padding: 0 10px; width: 100%; box-sizing: border-box; margin-bottom: 35px; }
-    .progress-container { display: flex; justify-content: center; gap: 1px; width: 100%; }
-    .progress-column { display: flex; flex-direction: column; gap: 1px; }
-    .progress-dot { width: var(--dot-size); height: var(--dot-size); background-color: #222; border-radius: 2px; transition: background-color 0.2s; }
+    .progress-container { display: flex; justify-content: center; gap: 0; width: 100%; }
+    .progress-column { display: flex; flex-direction: column; gap: 0; }
+    .progress-dot { 
+      width: var(--dot-size); height: var(--dot-size); 
+      background-color: #222; border-radius: 50%; /* 完全な円形 */
+      transition: background-color 0.2s, box-shadow 0.2s;
+    }
 
     .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
-    button.action-btn { background: none; border: 2px solid var(--text-main); color: var(--text-main); padding: 18px; font-family: inherit; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    button.action-btn { background: none; border: 1px solid var(--text-main); color: var(--text-main); padding: 15px; font-family: inherit; font-size: 1rem; cursor: pointer; }
     #stopBtn { border-color: var(--accent-red); color: var(--accent-red); }
 
+    /* 5. 週間レポート (字間調整、バー幅半分) */
     .weekly-section { margin-bottom: 30px; }
-    .section-title { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 15px; }
-    .weekly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
-    .day-bar-container { width: 100%; height: 80px; background-color: #222; border-radius: 4px; display: flex; align-items: flex-end; overflow: hidden; margin-bottom: 8px; }
-    .day-bar { width: 100%; background-color: var(--text-main); transition: height 0.5s ease; }
-    .day-time { font-size: 0.6rem; white-space: nowrap; }
+    .section-title { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 15px; letter-spacing: 2px; }
+    .weekly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; letter-spacing: 1px; }
+    .day-bar-container {
+      width: 100%; height: 80px; background-color: #222; border-radius: 2px;
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-end; margin-bottom: 8px;
+    }
+    .day-bar { 
+      width: 50%; /* 横幅を半分に */
+      background-color: var(--text-main); transition: height 0.5s ease; 
+    }
+    .day-time { font-size: 0.55rem; color: var(--text-sub); }
 
-    .history-section { border-top: 2px solid var(--grid-color); padding-top: 20px; width: 100%; }
+    .history-section { border-top: 1px solid var(--grid-color); padding-top: 20px; width: 100%; }
     .history-item { padding: 12px 0; border-bottom: 1px solid #222; }
-    .mini-bar { display: flex; gap: 2px; margin-top: 6px; flex-wrap: wrap; }
-    .mini-dot { width: 4px; height: 4px; background-color: #222; border-radius: 1px; }
-    .total-area { text-align: right; color: var(--accent-red); margin-top: 15px; font-size: 1.1rem; }
+    .mini-bar { display: flex; gap: 1px; margin-top: 6px; flex-wrap: wrap; }
+    .mini-dot { width: 4px; height: 4px; background-color: #222; border-radius: 50%; }
+    .total-area { text-align: right; color: var(--accent-red); margin-top: 15px; font-size: 1rem; letter-spacing: 1px; }
+
+    /* コンパクトモード */
+    body.compact-mode .history-section, body.compact-mode .btn-group, body.compact-mode .weekly-section, body.compact-mode .status-area { display: none; }
+    body.compact-mode .container { margin-top: 15px; }
   </style>
 </head>
 <body id="mainBody">
+
   <div class="container">
-    <div class="status-area"><span><span class="status-dot"></span>Work Logging</span><span>Lapse</span></div>
+    <div class="status-area">
+      <span class="status-dot"></span>
+      <span>Lapse</span>
+    </div>
+
     <div class="header-nav">
       <input type="text" id="taskName" placeholder="Task Name...">
       <button class="size-btn" onclick="toggleCompactMode()" id="modeBtn">MINIMIZE</button>
     </div>
+
     <div id="timerDisplay">00:00:00</div>
-    <div class="progress-outer"><div id="progressBar" class="progress-container"></div></div>
+    
+    <div class="progress-outer">
+      <div id="progressBar" class="progress-container"></div>
+    </div>
+
     <div class="btn-group">
       <button class="action-btn" id="startBtn" onclick="startTask()">START</button>
       <button class="action-btn" id="stopBtn" onclick="stopTask()" disabled>STOP</button>
     </div>
-    <div class="weekly-section"><div class="section-title">WEEKLY REPORT</div><div id="weeklyReport" class="weekly-grid"></div></div>
-    <div class="history-section"><div class="section-title">RECENT LOGS</div><div id="historyList"></div><div id="totalTime" class="total-area"></div></div>
+
+    <div class="weekly-section">
+      <div class="section-title">WEEKLY REPORT</div>
+      <div id="weeklyReport" class="weekly-grid"></div>
+    </div>
+
+    <div class="history-section">
+      <div class="section-title">RECENT LOGS</div>
+      <div id="historyList"></div>
+      <div id="totalTime" class="total-area"></div>
+    </div>
   </div>
 
   <script>
-    // ★デプロイしたWebアプリのURLに書き換えてください★
     const gasUrl = "https://script.google.com/macros/s/AKfycbxekGf21dxDwu_PgNrW6anyJ1hsYWq0eKfPuR9ElVVAH5-Ev6n27R9jbiiv6FxVxjhy/exec";
     
     let startTime;
@@ -124,12 +168,11 @@
       let cycleIdx = Math.floor(effectiveElapsed / CYCLE_TIME);
       let progressInCycle = (effectiveElapsed >= MAX_TOTAL_TIME) ? 1 : (effectiveElapsed % CYCLE_TIME) / CYCLE_TIME;
       const activeCols = Math.floor(progressInCycle * DOTS_PER_ROW);
-      const columns = document.querySelectorAll('.progress-column');
-      columns.forEach((col, i) => {
+      document.querySelectorAll('.progress-column').forEach((col, i) => {
         col.querySelectorAll('.progress-dot').forEach(dot => {
           if (i < activeCols) {
             dot.style.backgroundColor = COLORS[cycleIdx];
-            dot.style.boxShadow = `0 0 6px ${COLORS[cycleIdx]}`;
+            dot.style.boxShadow = `0 0 4px ${COLORS[cycleIdx]}`;
           } else {
             dot.style.backgroundColor = cycleIdx > 0 ? COLORS[cycleIdx-1] : '#222';
             dot.style.boxShadow = 'none';
@@ -170,18 +213,27 @@
     function loadData() {
       fetch(gasUrl).then(res => res.json()).then(data => {
         if (!data) return;
+        // 履歴の表示ロジックを強化
         renderHistory(data.history || []);
         renderWeeklyReport(data.weekly || {});
         document.getElementById('totalTime').innerText = `TOTAL: ${data.totalTime || "0h 0m"}`;
-      }).catch(e => console.error(e));
+      }).catch(e => {
+        console.error("Data fetch error:", e);
+        document.getElementById('historyList').innerHTML = '<div style="font-size:0.7rem; color:#444;">Logs currently unavailable</div>';
+      });
     }
 
     function renderHistory(history) {
-      document.getElementById('historyList').innerHTML = history.map(item => {
+      const list = document.getElementById('historyList');
+      if (history.length === 0) {
+        list.innerHTML = '<div style="font-size:0.8rem; color:var(--text-sub);">No logs today.</div>';
+        return;
+      }
+      list.innerHTML = history.map(item => {
         const active = Math.min(Math.floor(item.duration / 10), 36);
         let m = '<div class="mini-bar">';
         for(let i=0; i<36; i++) m += `<div class="mini-dot" style="background-color: ${i < active ? COLORS[Math.min(Math.floor(i/6), 5)] : '#222'}"></div>`;
-        return `<div class="history-item"><div style="display:flex;justify-content:space-between;font-size:0.9rem;"><span>${item.title.toUpperCase()}</span><span>${item.duration}m</span></div>${m}</div>`;
+        return `<div class="history-item"><div style="display:flex;justify-content:space-between;font-size:0.8rem;"><span>${item.title.toUpperCase()}</span><span>${item.duration}m</span></div>${m}</div>`;
       }).join('');
     }
 
