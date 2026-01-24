@@ -131,6 +131,27 @@
     <div class="history-section"><div class="section-title">RECENT</div><div id="historyList"></div><div id="totalTime" style="text-align:right; color:#ff0033; margin-top:15px;"></div></div>
   </div>
 
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <div style="text-align:center; margin-bottom:20px; letter-spacing:4px;">SETTINGS</div>
+      
+      <label class="modal-label">1. GAS Web App URL</label>
+      <input type="text" id="settingGasUrl" class="modal-input" placeholder="https://script.google.com/...">
+      
+      <div style="margin-bottom: 15px;">
+        <label class="modal-label">2. Click to Authorize (First time only)</label>
+        <button class="modal-btn" style="background: #333; color: #fff; border: 1px solid #555;" onclick="authorizeGas()">AUTHORIZE ON GOOGLE</button>
+        <p style="font-size: 0.6rem; color: #555; margin-top: 5px;">※別タブでGoogleの承認画面が開きます。「許可」した後にこの画面に戻ってください。</p>
+      </div>
+  
+      <label class="modal-label">3. Calendar ID (Your email)</label>
+      <input type="text" id="settingCalId" class="modal-input" placeholder="example@gmail.com">
+      
+      <button class="modal-btn" onclick="saveSettings()">SAVE ALL</button>
+      <div style="text-align:center; margin-top:15px;"><span onclick="closeSettings()" style="color:#444; cursor:pointer; font-size:0.7rem;">CLOSE</span></div>
+    </div>
+  </div>
+
   <script>
     let appGasUrl = localStorage.getItem('lapse_gasUrl') || "";
     let appCalId = localStorage.getItem('lapse_calId') || "";
