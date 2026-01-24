@@ -190,15 +190,29 @@
       } catch (e) { console.error(e); }
     }
 
-    function loadData() {
-      if(!appGasUrl || !appCalId) return;
-      fetch(`${appGasUrl}?calendarId=${encodeURIComponent(appCalId)}&_t=${Date.now()}`, { redirect: 'follow' })
-      .then(res => res.json()).then(data => {
-        if (data.error) return;
+      function loadData() {
+      if (!appGasUrl || !appCalId) return;
+    
+      // 以前のスクリプトタグがあれば削除
+      const oldScript = document.getElementById('jsonp-script');
+      if (oldScript) oldScript.remove();
+    
+      // JSONP用のコールバック関数をグローバルに定義
+      window.handleGasResponse = function(data) {
+        if (data.error) {
+          console.error("GAS Error:", data.error);
+          return;
+        }
         renderHistory(data.history || []);
         renderWeeklyReport(data.weekly || {});
         document.getElementById('totalTime').innerText = `TOTAL: ${data.totalTime || "0h 0m"}`;
-      }).catch(e => console.error(e));
+      };
+    
+      // スクリプトタグを作成して読み込む（これでCORSを回避）
+      const script = document.createElement('script');
+      script.id = 'jsonp-script';
+      script.src = `${appGasUrl}?calendarId=${encodeURIComponent(appCalId)}&callback=handleGasResponse&_t=${Date.now()}`;
+      document.body.appendChild(script);
     }
 
     function renderHistory(history) {
