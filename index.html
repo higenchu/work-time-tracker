@@ -4,14 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lapse</title>
-  <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-color: #111111;
       --text-main: #ffffff;
-      /* Lapse, ボタン, 入力欄を以前の暗い色(#333333)に */
-      --text-sub: #333333; 
+      --text-dim: #333333;   /* 入力枠などの暗い色 */
+      --text-label: #aaaaaa; /* 明るくしたラベル文字 */
       --accent-red: #ff0033;
       --grid-color: #222222;
       --dot-size: 8px; 
@@ -23,94 +22,89 @@
       background-size: 20px 20px;
       color: var(--text-main);
       font-family: 'DotGothic16', sans-serif;
-      margin: 0;
-      display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-      overflow-x: hidden;
+      margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh;
     }
 
     .container { width: 92%; max-width: 420px; margin-top: 40px; position: relative; }
     
+    /* ⚙ボタン */
     .settings-btn {
       position: absolute; top: 0; right: 0;
-      background: none; border: none; color: var(--text-sub);
-      font-family: inherit; font-size: 1rem; cursor: pointer; z-index: 10;
+      background: none; border: none; color: var(--text-dim);
+      font-size: 1.2rem; cursor: pointer; z-index: 10;
     }
 
-    .status-area { display: flex; align-items: center; font-size: 0.75rem; color: var(--text-sub); margin-bottom: 10px; }
+    .status-area { display: flex; align-items: center; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 10px; }
     .status-dot { width: 6px; height: 6px; background-color: var(--accent-red); border-radius: 50%; display: inline-block; margin-right: 6px; opacity: 0; }
     .recording .status-dot { animation: blink 1s infinite; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
     .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px; }
     input[type="text"] { 
-      flex-grow: 1; background: none; border: none; border-bottom: 1px solid var(--text-sub);
+      flex-grow: 1; background: none; border: none; border-bottom: 1px solid var(--text-dim);
       color: var(--text-main); padding: 8px 0; font-family: inherit; font-size: 0.9rem; outline: none; 
     }
     .size-btn { 
-      background: none; border: 1px solid var(--text-sub); color: var(--text-sub);
+      background: none; border: 1px solid var(--text-dim); color: var(--text-dim);
       padding: 4px 10px; font-family: inherit; font-size: 0.6rem; cursor: pointer;
     }
 
-    /* タイマー字間調整 */
-    #timerDisplay { 
-      font-size: 4.8rem; text-align: center; margin: 10px 0 20px; 
-      font-variant-numeric: tabular-nums; letter-spacing: 4px; 
-    }
+    #timerDisplay { font-size: 4.8rem; text-align: center; margin: 10px 0 20px; letter-spacing: 4px; font-variant-numeric: tabular-nums; }
 
-    /* プログレスバー：円形、ギャップなし */
     .progress-outer { padding: 0 10px; width: 100%; box-sizing: border-box; margin-bottom: 35px; }
     .progress-container { display: flex; justify-content: center; gap: 0; width: 100%; }
     .progress-column { display: flex; flex-direction: column; gap: 0; }
-    .progress-dot { 
-      width: var(--dot-size); height: var(--dot-size); 
-      background-color: #222; border-radius: 50%;
-      transition: background-color 0.2s;
-    }
+    .progress-dot { width: var(--dot-size); height: var(--dot-size); background-color: #222; border-radius: 50%; transition: background-color 0.2s; }
 
     .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
     button.action-btn { background: none; border: 1px solid var(--text-main); color: var(--text-main); padding: 15px; font-family: inherit; font-size: 1rem; cursor: pointer; }
     #stopBtn { border-color: var(--accent-red); color: var(--accent-red); }
 
-    /* WEEKLY：字間調整、バー幅50% */
-    .weekly-section { margin-bottom: 30px; }
-    .section-title { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 15px; letter-spacing: 4px; }
-    .weekly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; letter-spacing: 2px; }
-    
-    .day-column { display: flex; flex-direction: column; align-items: center; }
+    /* ラベルを明るく修正 */
+    .section-title { font-size: 0.75rem; color: var(--text-label); margin-bottom: 15px; letter-spacing: 4px; }
+    .day-label, .day-time { font-size: 0.6rem; color: var(--text-label); margin-bottom: 5px; }
+
+    .weekly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
     .day-bar-container {
       width: 50%; height: 80px; background-color: #222; border-radius: 2px;
-      display: flex; flex-direction: column; align-items: center; justify-content: flex-end; margin-bottom: 8px;
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-end; margin: 0 auto 8px;
     }
-    .day-bar { width: 100%; background-color: var(--text-main); transition: height 0.5s ease; }
-    .day-time { font-size: 0.55rem; color: var(--text-sub); }
+    .day-bar { width: 100%; background-color: var(--text-main); transition: height 0.5s; }
 
-    .history-section { border-top: 1px solid var(--grid-color); padding-top: 20px; width: 100%; }
     .history-item { padding: 12px 0; border-bottom: 1px solid #222; }
-    .mini-dot { width: 4px; height: 4px; background-color: #222; border-radius: 50%; }
+    .history-item span { color: var(--text-main); }
 
-    /* 設定モーダル */
-    .modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.95); z-index: 100; align-items: center; justify-content: center;
-    }
+    /* モーダル内のテキスト */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; align-items: center; justify-content: center; }
     .modal.show { display: flex; }
     .modal-content { width: 85%; max-width: 350px; background: #111; border: 1px solid #333; padding: 25px; }
-    .modal-input { width: 100%; background: #222; border: none; color: #fff; padding: 12px; margin-bottom: 15px; font-family: inherit; font-size: 0.8rem; box-sizing: border-box; }
-    .modal-btn { width: 100%; background: #fff; color: #000; border: none; padding: 12px; font-family: inherit; font-weight: bold; cursor: pointer; }
+    .modal-title { color: var(--text-label); text-align: center; margin-bottom: 20px; letter-spacing: 4px; }
+    .modal-label { display: block; color: var(--text-label); margin-bottom: 5px; font-size: 0.7rem; }
+    .modal-input { width: 100%; background: #222; border: none; color: #fff; padding: 12px; margin-bottom: 15px; font-family: inherit; box-sizing: border-box; }
+    .modal-btn { width: 100%; background: #fff; color: #000; border: none; padding: 12px; font-family: inherit; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+    .auth-hint { font-size: 0.6rem; color: #666; margin-bottom: 15px; line-height: 1.4; }
 
     body.compact-mode .history-section, body.compact-mode .btn-group, body.compact-mode .weekly-section, body.compact-mode .status-area, body.compact-mode .settings-btn { display: none; }
-    body.compact-mode .container { margin-top: 15px; }
   </style>
 </head>
 <body id="mainBody">
 
   <div id="settingsModal" class="modal">
     <div class="modal-content">
-      <div style="text-align:center; margin-bottom:20px; letter-spacing:4px;">SETTINGS</div>
-      <input type="text" id="settingGasUrl" class="modal-input" placeholder="GAS Web App URL">
-      <input type="text" id="settingCalId" class="modal-input" placeholder="Calendar ID">
-      <button class="modal-btn" onclick="saveSettings()">SAVE</button>
-      <div style="text-align:center; margin-top:15px;"><span onclick="closeSettings()" style="color:#444; cursor:pointer; font-size:0.7rem;">CLOSE</span></div>
+      <div class="modal-title">SETTINGS</div>
+      
+      <label class="modal-label">1. GAS Web App URL</label>
+      <input type="text" id="settingGasUrl" class="modal-input" placeholder="https://script.google.com/...">
+      
+      <label class="modal-label">2. Permission</label>
+      <button class="modal-btn" style="background:#333; color:#fff;" onclick="authorizeGas()">AUTHORIZE ON GOOGLE</button>
+      <p class="auth-hint">※初回のみ必須。別タブで「許可」ボタンを押してから戻ってください。</p>
+
+      <label class="modal-label">3. Calendar ID (Email)</label>
+      <input type="text" id="settingCalId" class="modal-input" placeholder="example@gmail.com">
+      
+      <button class="modal-btn" onclick="saveSettings()">SAVE ALL</button>
+      <div style="text-align:center;"><span onclick="closeSettings()" style="color:#555; cursor:pointer; font-size:0.7rem;">CLOSE</span></div>
     </div>
   </div>
 
@@ -128,28 +122,7 @@
       <button class="action-btn" id="stopBtn" onclick="stopTask()" disabled>STOP</button>
     </div>
     <div class="weekly-section"><div class="section-title">WEEKLY</div><div id="weeklyReport" class="weekly-grid"></div></div>
-    <div class="history-section"><div class="section-title">RECENT</div><div id="historyList"></div><div id="totalTime" style="text-align:right; color:#ff0033; margin-top:15px;"></div></div>
-  </div>
-
-  <div id="settingsModal" class="modal">
-    <div class="modal-content">
-      <div style="text-align:center; margin-bottom:20px; letter-spacing:4px;">SETTINGS</div>
-      
-      <label class="modal-label">1. GAS Web App URL</label>
-      <input type="text" id="settingGasUrl" class="modal-input" placeholder="https://script.google.com/...">
-      
-      <div style="margin-bottom: 15px;">
-        <label class="modal-label">2. Click to Authorize (First time only)</label>
-        <button class="modal-btn" style="background: #333; color: #fff; border: 1px solid #555;" onclick="authorizeGas()">AUTHORIZE ON GOOGLE</button>
-        <p style="font-size: 0.6rem; color: #555; margin-top: 5px;">※別タブでGoogleの承認画面が開きます。「許可」した後にこの画面に戻ってください。</p>
-      </div>
-  
-      <label class="modal-label">3. Calendar ID (Your email)</label>
-      <input type="text" id="settingCalId" class="modal-input" placeholder="example@gmail.com">
-      
-      <button class="modal-btn" onclick="saveSettings()">SAVE ALL</button>
-      <div style="text-align:center; margin-top:15px;"><span onclick="closeSettings()" style="color:#444; cursor:pointer; font-size:0.7rem;">CLOSE</span></div>
-    </div>
+    <div class="history-section"><div class="section-title">RECENT</div><div id="historyList"></div><div id="totalTime" style="text-align:right; color:#ff0033; margin-top:15px; font-size: 0.9rem;"></div></div>
   </div>
 
   <script>
@@ -160,10 +133,13 @@
 
     function openSettings() { document.getElementById('settingGasUrl').value = appGasUrl; document.getElementById('settingCalId').value = appCalId; document.getElementById('settingsModal').classList.add('show'); }
     function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
+    function authorizeGas() { const url = document.getElementById('settingGasUrl').value.trim(); if(url) window.open(url, '_blank'); else alert("Enter GAS URL first."); }
     function saveSettings() {
-      const url = document.getElementById('settingGasUrl').value.trim();
-      const id = document.getElementById('settingCalId').value.trim();
-      if(url && id) { localStorage.setItem('lapse_gasUrl', url); localStorage.setItem('lapse_calId', id); appGasUrl = url; appCalId = id; closeSettings(); loadData(); }
+      appGasUrl = document.getElementById('settingGasUrl').value.trim();
+      appCalId = document.getElementById('settingCalId').value.trim();
+      localStorage.setItem('lapse_gasUrl', appGasUrl);
+      localStorage.setItem('lapse_calId', appCalId);
+      closeSettings(); loadData();
     }
 
     function toggleCompactMode() { const isCompact = document.body.classList.toggle('compact-mode'); document.getElementById('modeBtn').innerText = isCompact ? 'EXPAND' : 'MINIMIZE'; }
@@ -206,7 +182,8 @@
       clearInterval(timerInterval);
       const payload = { calendarId: appCalId, taskName: document.getElementById('taskName').value || "Untitled", startTime: startTime.toISOString(), endTime: new Date().toISOString() };
       document.getElementById('mainBody').classList.remove('recording');
-      try { await fetch(appGasUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+      try { 
+        await fetch(appGasUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
         document.getElementById('timerDisplay').innerText = "00:00:00"; document.getElementById('taskName').value = "";
         document.getElementById('startBtn').disabled = false; document.getElementById('stopBtn').disabled = true;
         setTimeout(loadData, 1500); 
@@ -215,7 +192,8 @@
 
     function loadData() {
       if(!appGasUrl || !appCalId) return;
-      fetch(`${appGasUrl}?calendarId=${encodeURIComponent(appCalId)}`).then(res => res.json()).then(data => {
+      fetch(`${appGasUrl}?calendarId=${encodeURIComponent(appCalId)}&_t=${Date.now()}`, { redirect: 'follow' })
+      .then(res => res.json()).then(data => {
         if (data.error) return;
         renderHistory(data.history || []);
         renderWeeklyReport(data.weekly || {});
@@ -236,7 +214,7 @@
       const maxMin = Math.max(...Object.values(weeklyData), 1);
       document.getElementById('weeklyReport').innerHTML = WEEK_DAYS.map(day => {
         const mins = weeklyData[day] || 0;
-        return `<div class="day-column"><div class="day-label" style="font-size:0.6rem; color:#333; margin-bottom:5px;">${day}</div><div class="day-bar-container"><div class="day-bar" style="height: ${(mins/maxMin)*100}%;"></div></div><div class="day-time" style="font-size:0.5rem; color:#333;">${Math.floor(mins/60)}h</div></div>`;
+        return `<div class="day-column"><div class="day-label">${day}</div><div class="day-bar-container"><div class="day-bar" style="height: ${(mins/maxMin)*100}%;"></div></div><div class="day-time">${Math.floor(mins/60)}h</div></div>`;
       }).join('');
     }
 
