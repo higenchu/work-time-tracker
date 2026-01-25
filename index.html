@@ -131,10 +131,28 @@
     }
 
     function initProgressBar() {
-      const container = document.getElementById('progressBar'); container.innerHTML = '';
+      const container = document.getElementById('progressBar');
+      container.innerHTML = '';
+      // 40列作成
       for (let i = 0; i < 40; i++) {
-        const dot = document.createElement('div'); dot.classList.add('progress-dot');
-        container.appendChild(dot);
+        const column = document.createElement('div');
+        column.classList.add('progress-column'); // CSSでflex-direction: columnにする
+        column.style.display = 'flex';
+        column.style.flexDirection = 'column';
+        column.style.gap = '4px';
+        
+        // 1列につき3つのドット
+        for (let j = 0; j < 3; j++) {
+          const dot = document.createElement('div');
+          dot.classList.add('progress-dot');
+          // CSSを直接指定して確実に表示
+          dot.style.width = '6px';
+          dot.style.height = '6px';
+          dot.style.backgroundColor = '#222';
+          dot.style.borderRadius = '50%';
+          column.appendChild(dot);
+        }
+        container.appendChild(column);
       }
     }
 
